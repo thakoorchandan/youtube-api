@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+        #title{
+            width: 10%;
+            float: left;
+        }
+        #query{
+            width: 40%;
+            margin-left: 300px;
+            height: 30px;
+            margin-top: 30px;
+        }
+        #logo{
+            float: right;
+            border-radius: 50%;
+            margin-right: 50px;
+            width: 3%;
+            margin-top: 20px;
+        }
+        button{
+            height: 35px;
+        }
+        #videos{
+            display: grid;
+            grid-template-columns: repeat(4,25%);
+            align-items: center;
+        }
+        #videos>div{
+            width: 90%;
+             margin: 3%;
+        }
+        
+
+    </style>
+</head>
+<body>
+    
+    <div id="navbar">
+        <img id="title" src="https://lh3.googleusercontent.com/3zkP2SYe7yYoKKe47bsNe44yTgb4Ukh__rBbwXwgkjNRe4PykGG409ozBxzxkrubV7zHKjfxq6y9ShogWtMBMPyB3jiNps91LoNH8A=s500" alt="">
+        <input type="text" id="query" placeholder="search">
+        <button onclick="findVideo()">Search</button>
+        <img id="logo" src="https://yt3.ggpht.com/yti/APfAmoFw6_YHiSeCWndRIyf36aoaV4le6AugDBGRQf2E9w=s88-c-k-c0x00ffffff-no-rj-mo" alt="">
+    </div>
+    <hr style="clear:both">
+
+    <div id="videos">
+
+    </div>
+
+</body>
+</html>
+
+<script>
+
+    async function mostPopular() {
+
+        let videos_div = document.getElementById("videos");
+        
+        let video = await fetch(
+            `https://youtube.googleapis.com/youtube/v3/search?part=snippet&chart=mostPopular&regionCode=us&key=AIzaSyA9ZSmTcQGpkA-2fWSFxaC-sOpDQh6ozn8&maxResults=50`)
+        let data = await video.json();
+        console.log(data);
+
+
+
+        let { items } = data;
+
+        items = items.filter((el) => {
+            return el.id.videoId != undefined;
+        });
+
+        items.forEach(({ id: { videoId } }) => {
+
+            let div = document.createElement("div");
+            // div.style.marginTop = "20px";
+            div.innerHTML = `
+            <iframe  src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+
+            videos_div.appendChild(div)
+        });
+
+    }
+
+        mostPopular()
+
+
+
+
+
+    async function findVideo() {
+
+        let videos_div = document.getElementById("videos");
+        videos_div.innerHTML = null;
+
+        let q = document.getElementById("query").value;
+        let video = await fetch(
+            `https://youtube.googleapis.com/youtube/v3/search?q=${q}&key=AIzaSyA9ZSmTcQGpkA-2fWSFxaC-sOpDQh6ozn8&maxResults=21`)
+        let data = await video.json();
+        console.log(data);
+
+
+
+        let { items } = data;
+
+        items = items.filter((el) => {
+            return el.id.videoId != undefined;
+        });
+
+        items.forEach(({ id: { videoId } }) => {
+
+            let div = document.createElement("div");
+            // div.style.marginTop = "20px";
+            div.innerHTML = `
+            <iframe  src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+
+            videos_div.appendChild(div)
+        });
+
+    }
+
+</script>
+
+<!-- `https://youtube.googleapis.com/youtube/v3/search?part=snippet&chart=mostPopular&regionCode=us&key=AIzaSyA9ZSmTcQGpkA-2fWSFxaC-sOpDQh6ozn8&maxResults=21` -->
